@@ -1,0 +1,29 @@
+apiVersion: v1
+entries:
+  teamcity:
+  - apiVersion: v2
+    appVersion: 2024.07.3
+    created: "2024-11-28T13:22:11.400258534Z"
+    description: Teamcity on Kubernetes
+    digest: 6b286183f3cc23137595332e303dd75aba1fe5b8a36319d474848531b54a9ef7
+    home: https://github.com/sergelogvinov/helm-charts
+    icon: https://raw.githubusercontent.com/sergelogvinov/helm-charts/main/charts/teamcity/icon.png
+    keywords:
+    - ci
+    - continuous integration
+    - continuous delivery
+    - continuous deployment
+    - devops
+    - automation
+    maintainers:
+    - name: sergelogvinov
+      url: https://github.com/sergelogvinov
+    name: teamcity
+    sources:
+    - https://github.com/sergelogvinov/helm-charts/tree/master/charts/teamcity
+    - https://www.jetbrains.com/teamcity
+    type: application
+    urls:
+    - https://github.com/jakub-k-slys/helm/releases/download/teamcity-0.7.4/teamcity-0.7.4.tgz
+    version: 0.7.4
+generated: "2024-11-28T13:22:11.40027269Z"
