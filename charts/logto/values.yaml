@@ -9,11 +9,9 @@ fullnameOverride: ""
 logto:
   replicaCount: 1
   image:
-    repository: ghcr.io/logto-io/logto:latest
+    repository: ghcr.io/logto-io/logto
     pullPolicy: IfNotPresent
     tag: ""
-
-  # -- logto server environment variables
   envs:
     {}
 

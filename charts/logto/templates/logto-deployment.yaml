@@ -38,12 +38,14 @@ spec:
       securityContext:
         {{- toYaml .Values.logto.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}-server
+        - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.logto.securityContext | nindent 12 }}
           image: "{{ .Values.logto.image.repository }}:{{ .Values.logto.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.logto.image.pullPolicy }}
           env:
+            - name: DB_URL
+              value: "postgresql://{{ .Values.logto.database.user }}:{{ .Values.logto.database.password }}@{{ .Values.logto.database.host }}:{{ .Values.logto.database.port }}/{{ .Values.logto.database.databaseName }}"
             {{- range $name, $value := .Values.logto.envs }}
             - name: {{ $name }}
               value: {{ $value | quote }}
