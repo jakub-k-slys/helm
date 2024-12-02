@@ -1,33 +1,21 @@
-{{- if .Values.server.enabled -}}
 apiVersion: apps/v1
-{{- if .Values.server.clusterMode }}
-kind: StatefulSet
-{{- else }}
 kind: Deployment
-{{- end }}
 metadata:
   name: {{ include "logto.fullname" . }}
   labels:
     {{- include "logto.labels" . | nindent 4 }}
 spec:
-  {{- if .Values.server.clusterMode }}
-  serviceName: {{ include "logto.fullname" . }}-headless
-  replicas: {{ .Values.server.replicaCount }}
-  updateStrategy:
-    type: RollingUpdate
-  {{- else }}
   replicas: 1
   strategy:
-    type: {{ .Values.server.updateStrategy.type }}
-  {{- end }}
+    type: {{ .Values.logto.updateStrategy.type }}
   selector:
     matchLabels:
       {{- include "logto.selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: server
+      app.kubernetes.io/component: logto
   template:
     metadata:
       annotations:
-      {{- with .Values.server.podAnnotations }}
+      {{- with .Values.logto.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- if .Values.metrics.enabled }}
@@ -37,37 +25,26 @@ spec:
       {{- end}}
       labels:
         {{- include "logto.selectorLabels" . | nindent 8 }}
-        app.kubernetes.io/component: server
+        app.kubernetes.io/component: logto
     spec:
       enableServiceLinks: false
-      {{- if .Values.server.priorityClassName }}
-      priorityClassName: {{ .Values.server.priorityClassName }}
+      {{- if .Values.logto.priorityClassName }}
+      priorityClassName: {{ .Values.logto.priorityClassName }}
       {{- end }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       securityContext:
-        {{- toYaml .Values.server.podSecurityContext | nindent 8 }}
+        {{- toYaml .Values.logto.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}-server
           securityContext:
-            {{- toYaml .Values.server.securityContext | nindent 12 }}
-          image: "{{ .Values.server.image.repository }}:{{ .Values.server.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.server.image.pullPolicy }}
-          {{- if .Values.server.clusterMode }}
-          command: ["/bin/sh", "/opt/entrypoint/entrypoint.sh"]
-          {{- end }}
+            {{- toYaml .Values.logto.securityContext | nindent 12 }}
+          image: "{{ .Values.logto.image.repository }}:{{ .Values.logto.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.logto.image.pullPolicy }}
           env:
-            - name: TEAMCITY_DATA_PATH
-              value: /data/datadir
-            - name: TEAMCITY_LOGS_PATH
-              value: /opt/logto/logs
-            {{- if .Values.server.clusterMode }}
-            - name: TEAMCITY_SERVER_OPTS
-              value: "-Dlogto.server.nodeId=${HOSTNAME} -Dlogto.server.rootURL=${NODE_URL}"
-            {{- end }}
-            {{- range $name, $value := .Values.server.envs }}
+            {{- range $name, $value := .Values.logto.envs }}
             - name: {{ $name }}
               value: {{ $value | quote }}
             {{- end }}
@@ -88,53 +65,18 @@ spec:
             initialDelaySeconds: 30
             failureThreshold: 20
             periodSeconds: 15
-          # readinessProbe:
-          #   httpGet:
-          #     path: /healthCheck/ready
-          #     port: http
-          #   initialDelaySeconds: 120
-          #   failureThreshold: 3
-          #   periodSeconds: 60
-          volumeMounts:
-            - name: logs
-              mountPath: /opt/logto/logs
-            - name: temp
-              mountPath: /opt/logto/temp
-            {{- if .Values.server.clusterMode }}
-            - name: entrypoint
-              mountPath: /opt/entrypoint
-            {{- end }}
-            - name: data
-              mountPath: /data
-          {{- if or .Values.server.configDb .Values.postgresql.enabled }}
-            - name: config
-              mountPath: /data/datadir/config/database.properties
-              subPath: database.properties
-              readOnly: true
-          {{- end }}
+          volumeMounts: []
           resources:
-            {{- toYaml .Values.server.resources | nindent 12 }}
-        {{- if .Values.metrics.enabled }}
-        - name: {{ .Chart.Name }}-monitoring
-          securityContext:
-            {{- toYaml .Values.metrics.securityContext | nindent 12 }}
-          image: "{{ .Values.metrics.image.repository }}:{{ .Values.metrics.image.tag }}"
-          imagePullPolicy: {{ .Values.metrics.image.pullPolicy }}
-          # command: ["sleep","600000"]
-          volumeMounts:
-            - name: metrics
-              mountPath: /etc/nginx
-              readOnly: true
-        {{- end }}
-      {{- with .Values.server.nodeSelector }}
+            {{- toYaml .Values.logto.resources | nindent 12 }}
+      {{- with .Values.logto.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.server.affinity }}
+      {{- with .Values.logto.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.server.tolerations }}
+      {{- with .Values.logto.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -143,23 +85,7 @@ spec:
           emptyDir: {}
         - name: temp
           emptyDir: {}
-      {{- if .Values.server.clusterMode }}
-        - name: entrypoint
-          configMap:
-            name: {{ include "logto.fullname" . }}-server
-            defaultMode: 493
-            items:
-              - key: entrypoint.sh
-                path: entrypoint.sh
-      {{- end }}
-        - name: data
-      {{- if .Values.server.persistentVolume.enabled }}
-          persistentVolumeClaim:
-            claimName: {{ if .Values.server.persistentVolume.existingClaim }}{{ .Values.server.persistentVolume.existingClaim }}{{- else }}{{ template "logto.fullname" . }}{{- end }}
-      {{- else }}
-          emptyDir: {}
-      {{- end }}
-      {{- if or .Values.server.configDb .Values.postgresql.enabled }}
+      {{- if or .Values.logto.configDb .Values.postgresql.enabled }}
         - name: config
           secret:
             secretName: {{ template "logto.fullname" . }}-db
@@ -171,4 +97,3 @@ spec:
             secretName: {{ include "logto.fullname" . }}
             defaultMode: 256
       {{- end }}
-{{- end }}
