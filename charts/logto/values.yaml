@@ -1,4 +1,4 @@
-# Default values for teamcity.
+# Default values for logto.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -7,14 +7,14 @@ nameOverride: ""
 fullnameOverride: ""
 
 server:
-  ## If false, teamcity server will not be installed
+  ## If false, logto server will not be installed
   ##
   enabled: true
 
   replicaCount: 1
 
-  # -- Teamcity server runs as cluster
-  # ref: https://www.jetbrains.com/help/teamcity/2024.07/multinode-setup.html
+  # -- logto server runs as cluster
+  # ref: https://www.jetbrains.com/help/logto/2024.07/multinode-setup.html
   clusterMode: false
   clusterResponsibilities:
     - CAN_PROCESS_BUILD_TRIGGERS
@@ -22,20 +22,20 @@ server:
     - CAN_CHECK_FOR_CHANGES
     - CAN_PROCESS_BUILD_MESSAGES
 
-  # -- Teamcity container image
+  # -- logto container image
   image:
-    repository: ghcr.io/sergelogvinov/teamcity
+    repository: ghcr.io/sergelogvinov/logto
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
 
-  # -- Teamcity server environment variables
+  # -- logto server environment variables
   envs:
     {}
     # TEAMCITY_SERVER_MEM_OPTS: "-Xmx2g -XX:ReservedCodeCacheSize=640m"
 
-  # -- Teamcity database properties
-  # ref: https://www.jetbrains.com/help/teamcity/setting-up-an-external-database.html
+  # -- logto database properties
+  # ref: https://www.jetbrains.com/help/logto/setting-up-an-external-database.html
   configDb: ""
   # configDb: |
   #   connectionUrl=jdbc:postgresql://<host>:5432/<database_name>
@@ -48,7 +48,7 @@ server:
   updateStrategy:
     type: Recreate
 
-  # -- Teamcity server Service Account.
+  # -- logto server Service Account.
   # ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
   serviceAccount:
     # Specifies whether a service account should be created
@@ -99,24 +99,24 @@ server:
   # -- Persistence parameters
   # ref: https://kubernetes.io/docs/user-guide/persistent-volumes/
   persistentVolume:
-    ## If true, teamcity will create/use a Persistent Volume Claim
+    ## If true, logto will create/use a Persistent Volume Claim
     ## If false, use emptyDir
     ##
     enabled: true
 
-    # -- Teamcity data Persistent Volume Claim annotations
+    # -- logto data Persistent Volume Claim annotations
     annotations: {}
 
-    # -- Teamcity data Persistent Volume access modes
+    # -- logto data Persistent Volume access modes
     # ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
     accessModes:
       - ReadWriteOnce
       # - ReadWriteMany
 
-    # -- teamcity data Persistent Volume size
+    # -- logto data Persistent Volume size
     size: 10Gi
 
-    # -- Teamcity data Persistent Volume Storage Class
+    # -- logto data Persistent Volume Storage Class
     # If defined, storageClassName: <storageClass>
     # If set to "-", storageClassName: "", which disables dynamic provisioning
     # If undefined (the default) or set to null, no storageClassName spec is
@@ -124,7 +124,7 @@ server:
     #   GKE, AWS & OpenStack)
     storageClass: ""
 
-    # -- Teamcity data Persistent Volume existing claim name
+    # -- logto data Persistent Volume existing claim name
     # If defined, PVC must be created manually before volume will be bound
     existingClaim: ""
 
@@ -146,21 +146,21 @@ server:
   affinity: {}
 
 agent:
-  ## If true, teamcity agent deployment will be installed
+  ## If true, logto agent deployment will be installed
   ##
   enabled: true
 
   image:
-    repository: ghcr.io/sergelogvinov/teamcity
+    repository: ghcr.io/sergelogvinov/logto
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
 
-  # -- Use a deployment if you want to start teamcity agents by yourself
-  # Teamcity can run agents by demand
+  # -- Use a deployment if you want to start logto agents by yourself
+  # logto can run agents by demand
   replicaCount: 0
 
-  # -- Teamcity agent environment variables
+  # -- logto agent environment variables
   envs:
     {}
     # DOCKER_TLS_VERIFY: "1"
@@ -173,7 +173,7 @@ agent:
   updateStrategy:
     type: Recreate
 
-  # -- Teamcity agent Service Account.
+  # -- logto agent Service Account.
   # ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
   serviceAccount:
     # Specifies whether a service account should be created
@@ -184,9 +184,9 @@ agent:
     # If not set and create is true, a name is generated using the fullname template
     name: ""
 
-  # -- Teamcity agent RBAC permission.
+  # -- logto agent RBAC permission.
   rbac:
-    ## If true, teamcity agent rbac rules will be created
+    ## If true, logto agent rbac rules will be created
     ##
     create: false
 
@@ -327,7 +327,7 @@ service:
 # -- Registry ingress parameters
 # ref: http://kubernetes.io/docs/user-guide/ingress/
 ingress:
-  # -- If true, teamcity Ingress will be created
+  # -- If true, logto Ingress will be created
   enabled: false
 
   # -- Ingress controller class name
@@ -350,7 +350,7 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
-# -- Expose Teamcity server metrics
+# -- Expose logto server metrics
 metrics:
   enabled: false
 
@@ -379,6 +379,6 @@ metrics:
 # https://github.com/helm/charts/blob/master/stable/postgresql/README.md
 postgresql:
   enabled: false
-  postgresqlDatabase: teamcity
-  postgresqlUsername: teamcity
-  postgresqlPassword: teamcity
+  postgresqlDatabase: logto
+  postgresqlUsername: logto
+  postgresqlPassword: logto
