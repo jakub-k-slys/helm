@@ -18,4 +18,4 @@ jobs:
         id: lint
         uses: helm/chart-testing-action@v2.6.1
       - name: Run helm chart linter
-        run: make lint
+        run: ct lint --config .github/ct.yaml --lint-conf .github/lintconf.yaml
