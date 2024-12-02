@@ -1,4 +1,3 @@
-# yaml-language-server: $schema=https://json.schemastore.org/chart.json
 apiVersion: v2
 name: logto
 description: Logto on Kubernetes
@@ -9,7 +8,7 @@ sources:
 keywords:
   - identity
 maintainers:
-  - name: jakub.k.slys
+  - name: jakub-k-slys
     url: jakub.slys.dev
 version: 0.1.0
 appVersion: v1.22.0
