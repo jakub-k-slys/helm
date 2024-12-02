@@ -6,9 +6,7 @@
 
 {{ template "chart.description" . }}
 
-TeamCity is a build management and CI/CD server from JetBrains.
-Self-hosted version of TeamCity is available for free for small teams.
-You can run TeamCity on Kubernetes using this Helm chart.
+Logto is an open-source Identity and Access Management (IAM) platform designed to streamline Customer Identity and Access Management (CIAM) and Workforce Identity Management. With Single Sign-On (SSO), OIDC-based authentication, and Multi-Tenant SaaS capabilities, Logto offers a scalable, secure, and developer-friendly way to manage authentication for modern web and mobile application.
 
 {{ template "chart.homepageLine" . }}
 
@@ -21,70 +19,6 @@ You can run TeamCity on Kubernetes using this Helm chart.
 Example:
 
 ```yaml
-server:
-  resources:
-    limits:
-      cpu: 4
-      memory: 8Gi
-    requests:
-      cpu: 500m
-      memory: 4Gi
-  persistentVolume:
-    storageClass: proxmox-xfs
-    size: 20Gi
-
-agent:
-  replicaCount: 2
-
-  resources:
-    limits:
-      cpu: 2
-      memory: 1Gi
-    requests:
-      cpu: 500m
-      memory: 512Mi
-
-  envs:
-    DOCKER_BUILDKIT: "1"
-    GOOGLE_APPLICATION_CREDENTIALS: /home/buildagent/.gcp/sa.json
-
-  # GCP service account key
-  extraVolumeMounts:
-    - name: gcp
-      mountPath: /home/buildagent/.gcp
-
-  extraVolumes:
-    - name: gcp
-      secret:
-        secretName: gcp
-        defaultMode: 432
-
-# Add docker-in-docker to the Teamcity agent
-dind:
-  resources:
-    limits:
-      cpu: 2
-      memory: 16Gi
-    requests:
-      cpu: 500m
-      memory: 2Gi
-
-  persistence:
-    enabled: true
-
-    storageClass: proxmox-xfs
-    size: 150Gi
-
-ingress:
-  enabled: true
-
-  hosts:
-    - host: ci.example.com
-      paths: ["/"]
-  tls:
-    - secretName: ci.example.com-ssl
-      hosts:
-        - ci.example.com
 ```
 
 {{ template "chart.valuesSection" . }}

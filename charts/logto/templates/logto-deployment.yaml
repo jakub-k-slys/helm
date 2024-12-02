@@ -6,12 +6,12 @@ kind: StatefulSet
 kind: Deployment
 {{- end }}
 metadata:
-  name: {{ include "teamcity.fullname" . }}
+  name: {{ include "logto.fullname" . }}
   labels:
-    {{- include "teamcity.labels" . | nindent 4 }}
+    {{- include "logto.labels" . | nindent 4 }}
 spec:
   {{- if .Values.server.clusterMode }}
-  serviceName: {{ include "teamcity.fullname" . }}-headless
+  serviceName: {{ include "logto.fullname" . }}-headless
   replicas: {{ .Values.server.replicaCount }}
   updateStrategy:
     type: RollingUpdate
@@ -22,7 +22,7 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      {{- include "teamcity.selectorLabels" . | nindent 6 }}
+      {{- include "logto.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: server
   template:
     metadata:
@@ -36,7 +36,7 @@ spec:
         prometheus.io/port: "9180"
       {{- end}}
       labels:
-        {{- include "teamcity.selectorLabels" . | nindent 8 }}
+        {{- include "logto.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: server
     spec:
       enableServiceLinks: false
@@ -47,7 +47,6 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "teamcity.server.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.server.podSecurityContext | nindent 8 }}
       containers:
@@ -63,10 +62,10 @@ spec:
             - name: TEAMCITY_DATA_PATH
               value: /data/datadir
             - name: TEAMCITY_LOGS_PATH
-              value: /opt/teamcity/logs
+              value: /opt/logto/logs
             {{- if .Values.server.clusterMode }}
             - name: TEAMCITY_SERVER_OPTS
-              value: "-Dteamcity.server.nodeId=${HOSTNAME} -Dteamcity.server.rootURL=${NODE_URL}"
+              value: "-Dlogto.server.nodeId=${HOSTNAME} -Dlogto.server.rootURL=${NODE_URL}"
             {{- end }}
             {{- range $name, $value := .Values.server.envs }}
             - name: {{ $name }}
@@ -98,9 +97,9 @@ spec:
           #   periodSeconds: 60
           volumeMounts:
             - name: logs
-              mountPath: /opt/teamcity/logs
+              mountPath: /opt/logto/logs
             - name: temp
-              mountPath: /opt/teamcity/temp
+              mountPath: /opt/logto/temp
             {{- if .Values.server.clusterMode }}
             - name: entrypoint
               mountPath: /opt/entrypoint
@@ -147,7 +146,7 @@ spec:
       {{- if .Values.server.clusterMode }}
         - name: entrypoint
           configMap:
-            name: {{ include "teamcity.fullname" . }}-server
+            name: {{ include "logto.fullname" . }}-server
             defaultMode: 493
             items:
               - key: entrypoint.sh
@@ -156,20 +155,20 @@ spec:
         - name: data
       {{- if .Values.server.persistentVolume.enabled }}
           persistentVolumeClaim:
-            claimName: {{ if .Values.server.persistentVolume.existingClaim }}{{ .Values.server.persistentVolume.existingClaim }}{{- else }}{{ template "teamcity.fullname" . }}{{- end }}
+            claimName: {{ if .Values.server.persistentVolume.existingClaim }}{{ .Values.server.persistentVolume.existingClaim }}{{- else }}{{ template "logto.fullname" . }}{{- end }}
       {{- else }}
           emptyDir: {}
       {{- end }}
       {{- if or .Values.server.configDb .Values.postgresql.enabled }}
         - name: config
           secret:
-            secretName: {{ template "teamcity.fullname" . }}-db
+            secretName: {{ template "logto.fullname" . }}-db
             defaultMode: 256
       {{- end }}
       {{- if .Values.metrics.enabled }}
         - name: metrics
           secret:
-            secretName: {{ include "teamcity.fullname" . }}
+            secretName: {{ include "logto.fullname" . }}
             defaultMode: 256
       {{- end }}
 {{- end }}
