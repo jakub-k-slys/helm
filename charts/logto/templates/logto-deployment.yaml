@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "logto.fullname" . }}
+  labels:
+    {{- include "logto.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  strategy:
+    type: {{ .Values.logto.updateStrategy.type }}
+  selector:
+    matchLabels:
+      {{- include "logto.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: logto
+  template:
+    metadata:
+      annotations:
+      {{- with .Values.logto.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.metrics.enabled }}
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/app/metrics"
+        prometheus.io/port: "9180"
+      {{- end}}
+      labels:
+        {{- include "logto.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: logto
+    spec:
+      enableServiceLinks: false
+      {{- if .Values.logto.priorityClassName }}
+      priorityClassName: {{ .Values.logto.priorityClassName }}
+      {{- end }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.logto.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.logto.securityContext | nindent 12 }}
+          image: "{{ .Values.logto.image.repository }}:{{ .Values.logto.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.logto.image.pullPolicy }}
+          env:
+            - name: DB_URL
+              value: {{ template "databaseConnectionString" . }}
+            {{- range $name, $value := .Values.logto.envs }}
+            - name: {{ $name }}
+              value: {{ $value | quote }}
+            {{- end }}
+          ports:
+            - name: http
+              containerPort: 8111
+              protocol: TCP
+            {{- if .Values.metrics.enabled }}
+            - name: metrics
+              containerPort: 9180
+              protocol: TCP
+            {{- end }}
+          startupProbe:
+            httpGet:
+              path: /healthCheck/healthy
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            failureThreshold: 20
+            periodSeconds: 15
+          volumeMounts: []
+          resources:
+            {{- toYaml .Values.logto.resources | nindent 12 }}
+      {{- with .Values.logto.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.logto.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.logto.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: logs
+          emptyDir: {}
+        - name: temp
+          emptyDir: {}
+      {{- if or .Values.logto.configDb .Values.postgresql.enabled }}
+        - name: config
+          secret:
+            secretName: {{ template "logto.fullname" . }}-db
+            defaultMode: 256
+      {{- end }}
+      {{- if .Values.metrics.enabled }}
+        - name: metrics
+          secret:
+            secretName: {{ include "logto.fullname" . }}
+            defaultMode: 256
+      {{- end }}
