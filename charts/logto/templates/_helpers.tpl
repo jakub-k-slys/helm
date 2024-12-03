@@ -1,4 +1,12 @@
 {{/*
+Create connection string
+*/}}
+{{- define "databaseConnectionString" -}}
+{{- $port := .Values.logto.database.port | toString }}
+{{- printf "postgresql://%s:%s@%s:%s/%s" .Values.logto.database.user .Values.logto.database.password .Values.logto.database.host $port .Values.logto.database.databaseName }}
+{{- end }}
+
+{{/*
 Expand the name of the chart.
 */}}
 {{- define "logto.name" -}}

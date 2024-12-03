@@ -45,7 +45,7 @@ spec:
           imagePullPolicy: {{ .Values.logto.image.pullPolicy }}
           env:
             - name: DB_URL
-              value: "postgresql://{{ .Values.logto.database.user }}:{{ .Values.logto.database.password }}@{{ .Values.logto.database.host }}:{{ .Values.logto.database.port }}/{{ .Values.logto.database.databaseName }}"
+              value: {{ template "databaseConnectionString" . }}
             {{- range $name, $value := .Values.logto.envs }}
             - name: {{ $name }}
               value: {{ $value | quote }}
