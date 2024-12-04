@@ -16,11 +16,11 @@ logto:
     {}
 
   database:
-    host: logto
+    host: postgres-rw
     port: 5432
-    user: logto
-    password: logto
-    databaseName: logto
+    user: postgres
+    password: postgres
+    databaseName: postgres
     maxConnections: 10
 
   # -- pod deployment update strategy type.

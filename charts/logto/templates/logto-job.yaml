@@ -5,7 +5,6 @@ metadata:
   annotations:
     "helm.sh/hook": pre-install
     "helm.sh/hook-weight": "-5"
-    "helm.sh/hook-delete-policy": hook-succeeded
   labels:
     {{- include "logto.labels" . | nindent 4 }}
 spec:
@@ -18,6 +17,6 @@ spec:
       containers:
       - name: {{ include "logto.fullname" . }}-seed
         image: node:20-bookworm-slim
-        command: ["npx",  "@logto/cli", "db", "seed", "--", "--db-url", "{{ template "databaseConnectionString" . }}"]
+        command: ["npx",  "@logto/cli", "db", "seed", "--db-url", "{{ template "databaseConnectionString" . }}"]
       restartPolicy: Never
   backoffLimit: 4
