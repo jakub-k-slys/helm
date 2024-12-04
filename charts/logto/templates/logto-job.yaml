@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "logto.fullname" . }}
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+  labels:
+    {{- include "logto.labels" . | nindent 4 }}
+spec:
+  template:
+    spec:
+      containers:
+      - name: {{ include "logto.fullname" . }}-seed
+        labels:
+          {{- include "logto.labels" . | nindent 10 }}
+        image: node:lts-bookworm-slim
+        command: ["npx",  "@logto/cli", "db", "seed", "--", "--db-url", "{{ template "databaseConnectionString" . }}"]
+      restartPolicy: Never
+  backoffLimit: 4
