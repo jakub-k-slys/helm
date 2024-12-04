@@ -1,5 +1,24 @@
 apiVersion: v1
 entries:
+  logto:
+  - apiVersion: v2
+    appVersion: 1.22.0
+    created: "2024-12-04T22:38:46.65619198Z"
+    description: Logto on Kubernetes
+    digest: b7c156b5478fde405e63e83c000d92236312a40732a1488b38a6440e77f38cce
+    home: https://github.com/jakub-k-slys/helm/charts/logto
+    keywords:
+    - identity
+    maintainers:
+    - name: jakub-k-slys
+      url: jakub.slys.dev
+    name: logto
+    sources:
+    - https://logto.io
+    type: application
+    urls:
+    - https://github.com/jakub-k-slys/helm/releases/download/logto-0.1.0/logto-0.1.0.tgz
+    version: 0.1.0
   teamcity:
   - apiVersion: v2
     appVersion: 2024.07.3
@@ -26,4 +45,4 @@ entries:
     urls:
     - https://github.com/jakub-k-slys/helm/releases/download/teamcity-0.7.4/teamcity-0.7.4.tgz
     version: 0.7.4
-generated: "2024-11-28T13:22:11.40027269Z"
+generated: "2024-12-04T22:38:46.656201107Z"
