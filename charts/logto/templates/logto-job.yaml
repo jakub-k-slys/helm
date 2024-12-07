@@ -1,3 +1,4 @@
+{{- if .Values.logto.seed -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -20,3 +21,4 @@ spec:
         command: ["npx",  "@logto/cli", "db", "seed", "--db-url", "{{ template "databaseConnectionString" . }}"]
       restartPolicy: Never
   backoffLimit: 4
+{{- end }}
