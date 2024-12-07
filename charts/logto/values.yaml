@@ -90,6 +90,18 @@ service:
   adminPort: 80
   ipFamilies: [IPv4]
 
+gateway:
+  enabled: true
+  core:
+    enabled: true
+    hostname: "auth"
+  admin:
+    enabled: true
+    hostname: "admin"
+  className: "gloo-gateway"
+  annotations:
+    {}
+
 # -- Registry ingress parameters
 # ref: http://kubernetes.io/docs/user-guide/ingress/
 ingress:
