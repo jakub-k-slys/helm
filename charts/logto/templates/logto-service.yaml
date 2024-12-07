@@ -12,13 +12,14 @@ spec:
   {{- end }}
   ipFamilyPolicy: {{ if eq (len .Values.service.ipFamilies) 2 }}PreferDualStack{{ else }}SingleStack{{ end }}
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
+    - port: {{ .Values.service.corePort }}
+      targetPort: 3001
       protocol: TCP
-      name: http
+      name: core
+    - port: {{ .Values.service.adminPort }}
+      targetPort: 3002
+      protocol: TCP
+      name: admin
   selector:
     {{- include "logto.selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: logto
-    {{- if .Values.logto.clusterMode }}
-    statefulset.kubernetes.io/pod-name: {{ include "logto.fullname" . }}-0
-    {{- end }}

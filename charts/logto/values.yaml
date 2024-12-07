@@ -16,13 +16,12 @@ logto:
   envs:
     {}
 
-  database:
-    host: postgres-rw
-    port: 5432
-    user: postgres
-    password: postgres
-    databaseName: postgres
-    maxConnections: 10
+db:
+  host: postgres-rw
+  port: 5432
+  user: postgres
+  password: postgres
+  name: postgres
 
   # -- pod deployment update strategy type.
   # ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#updating-a-deployment
@@ -87,8 +86,8 @@ logto:
 # ref: https://kubernetes.io/docs/concepts/services-networking/service/
 service:
   type: ClusterIP
-  port: 80
-
+  corePort: 80
+  adminPort: 80
   ipFamilies: [IPv4]
 
 # -- Registry ingress parameters
