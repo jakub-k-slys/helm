@@ -16,13 +16,6 @@ logto:
   envs:
     {}
 
-db:
-  host: postgres-rw
-  port: 5432
-  user: postgres
-  password: postgres
-  name: postgres
-
   # -- pod deployment update strategy type.
   # ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#updating-a-deployment
   updateStrategy:
@@ -81,6 +74,13 @@ db:
   # -- Affinity for pod assignment.
   # ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
   affinity: {}
+
+db:
+  host: postgres-rw
+  port: 5432
+  user: postgres
+  password: postgres
+  name: postgres
 
 # -- Service parameters
 # ref: https://kubernetes.io/docs/concepts/services-networking/service/
