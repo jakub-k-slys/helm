@@ -1,0 +1,56 @@
+{{- if .Values.gateway.enabled }}
+{{- $fullName := include "logto.fullname" . -}}
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    {}
+  name: {{ $fullName }}-core
+spec:
+  hostnames:
+  - {{ .Values.gateway.core.hostname }}
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: {{ $fullName }}
+  rules:
+  - backendRef:
+    - group: ""
+      kind: Service
+      name: {{ $fullName }}-core
+      port: {{ .Values.service.corePort }}
+      weight: 1
+    matches:
+    - path:
+        type: PathPrefix
+        value: /
+{{- end }}
+{{- if .Values.gateway.enabled }}
+{{- $fullName := include "logto.fullname" . -}}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  annotations:
+    {}
+  name: {{ $fullName }}-admin
+spec:
+  hostnames:
+  - {{ .Values.gateway.admin.hostname }}
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: {{ $fullName }}
+  rules:
+  - backendRef:
+    - group: ""
+      kind: Service
+      name: {{ $fullName }}-admin
+      port: {{ .Values.service.adminPort }}
+      port: 80
+      weight: 1
+    matches:
+    - path:
+        type: PathPrefix
+        value: /
+{{- end }}

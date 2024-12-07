@@ -1,8 +1,7 @@
 {{- if .Values.gateway.enabled -}}
 {{- $fullName := include "logto.fullname" . -}}
-{{- $svcPort := .Values.service.port -}}
 {{- if not (hasKey .Values.gateway.annotations "kubernetes.io/gateway.class") }}
-  {{- $_ := set .Values.gateway.annotations "kubernetes.io/gateway.class" .Values.gateway.className}}
+  {{- $_ := set .Values.gateway.annotations "kubernetes.io/gateway.class" .Values.gateway.className }}
 {{- end }}
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
@@ -12,31 +11,34 @@ metadata:
     {{- include "logto.labels" . | nindent 4 }}
   {{- with .Values.gateway.annotations }}
   annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
   gatewayClassName: {{ .Values.gateway.className }}
   listeners:
-  {{- if .Values.gateway.core.enabled -}}
+  {{- if .Values.gateway.core.enabled }}
   - name: {{ $fullName }}-core
     hostname: {{ .Values.gateway.core.hostname }}
     port: 443
     protocol: HTTPS
     tls:
-      certificateRef:
+      certificateRefs:
       - group: ""
         kind: Secret
         name: {{ $fullName }}-core-cert
+      mode: Terminate
   {{- end }}
-  {{- if .Values.gateway.admin.enabled -}}
+  {{- if .Values.gateway.admin.enabled }}
   - name: {{ $fullName }}-admin
     hostname: {{ .Values.gateway.admin.hostname }}
     port: 443
     protocol: HTTPS
     tls:
-      certificateRef:
+      certificateRefs:
       - group: ""
         kind: Secret
         name: {{ $fullName }}-admin-cert
+      mode: Terminate
   {{- end }}
 {{- end }}

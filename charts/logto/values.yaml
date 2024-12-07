@@ -78,9 +78,9 @@ logto:
 db:
   host: postgres-rw
   port: 5432
-  user: postgres
-  password: postgres
-  name: postgres
+  user: logto
+  password: logto
+  name: logto
 
 # -- Service parameters
 # ref: https://kubernetes.io/docs/concepts/services-networking/service/
@@ -94,11 +94,11 @@ gateway:
   enabled: true
   core:
     enabled: true
-    hostname: "auth"
+    hostname: auth.slys.dev
   admin:
     enabled: true
-    hostname: "admin"
-  className: "gloo-gateway"
+    hostname: admin.auth.slys.dev
+  className: gloo-gateway
   annotations:
     {}
 
