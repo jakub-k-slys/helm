@@ -15,7 +15,7 @@ spec:
     name: {{ .Values.gateway.name }}
     namespace: {{ .Values.gateway.namespace }}
   rules:
-  - backendRef:
+  - backendRefs:
     - group: ""
       kind: Service
       name: {{ $fullName }}-core
@@ -44,7 +44,7 @@ spec:
     name: {{ .Values.gateway.name }}
     namespace: {{ .Values.gateway.namespace }}
   rules:
-  - backendRef:
+  - backendRefs:
     - group: ""
       kind: Service
       name: {{ $fullName }}-admin
