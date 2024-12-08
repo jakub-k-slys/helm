@@ -1,4 +1,4 @@
-{{- if .Values.gateway.enabled -}}
+{{- if false -}}
 {{- $fullName := include "logto.fullname" . -}}
 {{- if not (hasKey .Values.gateway.annotations "kubernetes.io/gateway.class") }}
   {{- $_ := set .Values.gateway.annotations "kubernetes.io/gateway.class" .Values.gateway.className }}

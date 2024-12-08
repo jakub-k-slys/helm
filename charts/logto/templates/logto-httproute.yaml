@@ -12,7 +12,8 @@ spec:
   parentRefs:
   - group: gateway.networking.k8s.io
     kind: Gateway
-    name: {{ $fullName }}
+    name: {{ .Values.gateway.name }}
+    namespace: {{ .Values.gateway.namespace }}
   rules:
   - backendRef:
     - group: ""
@@ -25,9 +26,9 @@ spec:
         type: PathPrefix
         value: /
 {{- end }}
+---
 {{- if .Values.gateway.enabled }}
 {{- $fullName := include "logto.fullname" . -}}
----
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
@@ -40,7 +41,8 @@ spec:
   parentRefs:
   - group: gateway.networking.k8s.io
     kind: Gateway
-    name: {{ $fullName }}
+    name: {{ .Values.gateway.name }}
+    namespace: {{ .Values.gateway.namespace }}
   rules:
   - backendRef:
     - group: ""

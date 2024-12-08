@@ -101,6 +101,8 @@ gateway:
   className: gloo-gateway
   annotations:
     {}
+  name: http
+  namespace: gloo-system
 
 # -- Registry ingress parameters
 # ref: http://kubernetes.io/docs/user-guide/ingress/
