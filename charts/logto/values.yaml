@@ -7,6 +7,7 @@ nameOverride: ""
 fullnameOverride: ""
 
 logto:
+  seed: false
   replicaCount: 1
   image:
     repository: ghcr.io/logto-io/logto
@@ -14,14 +15,6 @@ logto:
     tag: ""
   envs:
     {}
-
-  database:
-    host: postgres-rw
-    port: 5432
-    user: postgres
-    password: postgres
-    databaseName: postgres
-    maxConnections: 10
 
   # -- pod deployment update strategy type.
   # ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#updating-a-deployment
@@ -34,22 +27,22 @@ logto:
 
   # -- Pod Security Context.
   # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-  podSecurityContext:
-    fsGroup: 1000
-    fsGroupChangePolicy: "OnRootMismatch"
+  #  podSecurityContext:
+  #  fsGroup: 1000
+  #  fsGroupChangePolicy: "OnRootMismatch"
 
   # -- Container Security Context.
   # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-  securityContext:
-    seccompProfile:
-      type: RuntimeDefault
-    allowPrivilegeEscalation: false
-    capabilities:
-      drop:
-        - ALL
-    runAsNonRoot: true
-    runAsUser: 1000
-    runAsGroup: 1000
+  #securityContext:
+  #  seccompProfile:
+  #    type: RuntimeDefault
+  #  allowPrivilegeEscalation: false
+  #  capabilities:
+  #    drop:
+  #      - ALL
+  #  runAsNonRoot: true
+  #  runAsUser: 1000
+  #  runAsGroup: 1000
 
   # -- Resource requests and limits.
   # ref: https://kubernetes.io/docs/user-guide/compute-resources/
@@ -82,13 +75,34 @@ logto:
   # ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
   affinity: {}
 
+db:
+  host: postgres-rw
+  port: 5432
+  user: logto
+  password: logto
+  name: logto
+
 # -- Service parameters
 # ref: https://kubernetes.io/docs/concepts/services-networking/service/
 service:
   type: ClusterIP
-  port: 80
-
+  corePort: 80
+  adminPort: 80
   ipFamilies: [IPv4]
+
+gateway:
+  enabled: true
+  core:
+    enabled: true
+    hostname: auth.slys.dev
+  admin:
+    enabled: true
+    hostname: admin.auth.slys.dev
+  className: gloo-gateway
+  annotations:
+    {}
+  name: http
+  namespace: gloo-system
 
 # -- Registry ingress parameters
 # ref: http://kubernetes.io/docs/user-guide/ingress/

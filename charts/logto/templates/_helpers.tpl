@@ -2,8 +2,8 @@
 Create connection string
 */}}
 {{- define "databaseConnectionString" -}}
-{{- $port := .Values.logto.database.port | toString }}
-{{- printf "postgresql://%s:%s@%s:%s/%s" .Values.logto.database.user .Values.logto.database.password .Values.logto.database.host $port .Values.logto.database.databaseName }}
+{{- $port := .Values.db.port | toString }}
+{{- printf "postgresql://%s:%s@%s:%s/%s" .Values.db.user .Values.db.password .Values.db.host $port .Values.db.name }}
 {{- end }}
 
 {{/*
@@ -58,19 +58,6 @@ app.kubernetes.io/name: {{ include "logto.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
-
-{{/*
-Create the database.properties file
-*/}}
-{{- define "logto.server.databaseProperties" -}}
-{{- if .Values.postgresql.enabled }}
-connectionProperties.user={{ .Values.postgresql.postgresqlUsername }}
-connectionUrl=jdbc\:postgresql\://{{ include "logto.fullname" . }}-postgresql/{{ .Values.postgresql.postgresqlDatabase }}
-connectionProperties.password={{ .Values.postgresql.postgresqlPassword }}
-{{- else }}
-{{ .Values.server.configDb | default "" }}
-{{- end }}
-{{- end }}
 
 {{/*
 Convert a memory resource like "500Mi" to the number 500 (Megabytes)

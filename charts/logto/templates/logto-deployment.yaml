@@ -46,27 +46,28 @@ spec:
           env:
             - name: DB_URL
               value: {{ template "databaseConnectionString" . }}
+            - name: TRUST_PROXY_HEADER
+              value: "1"
+            - name: ENDPOINT
+              value: https://{{ .Values.gateway.core.hostname }}
+            - name: ADMIN_ENDPOINT
+              value: https://{{ .Values.gateway.admin.hostname }}
             {{- range $name, $value := .Values.logto.envs }}
             - name: {{ $name }}
               value: {{ $value | quote }}
             {{- end }}
           ports:
-            - name: http
-              containerPort: 8111
+            - name: core
+              containerPort: 3001
+              protocol: TCP
+            - name: admin
+              containerPort: 3002
               protocol: TCP
             {{- if .Values.metrics.enabled }}
             - name: metrics
               containerPort: 9180
               protocol: TCP
             {{- end }}
-          startupProbe:
-            httpGet:
-              path: /healthCheck/healthy
-              port: http
-              scheme: HTTP
-            initialDelaySeconds: 30
-            failureThreshold: 20
-            periodSeconds: 15
           volumeMounts: []
           resources:
             {{- toYaml .Values.logto.resources | nindent 12 }}

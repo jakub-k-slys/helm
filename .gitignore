@@ -1,2 +1,4 @@
 vars/
 output.txt
+**/*.tgz
+.gitignore
