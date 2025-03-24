@@ -3,8 +3,7 @@ name: n8n
 description: A Helm chart for n8n workflow automation tool with Gateway API, external PostgreSQL and PVC
 type: application
 maintainers:
-  - name: Jakub Slys
-    url: https://github.com/jakub-k-slys
+  - name: jakub-k-slys
 home: https://n8n.io
 icon: https://n8n.io/favicon.ico
 sources:
