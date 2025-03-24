@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    app: {{ .Release.Name }}
+    {{- include "n8n.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.n8n.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Release.Name }}
+          image: "{{ .Values.n8n.image.repository }}:{{ .Values.n8n.image.tag }}"
+          imagePullPolicy: {{ .Values.n8n.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 5678
+          env:
+        {{- range .Values.n8n.env }}
+            - name: {{ .name }}
+          {{- if .value }}
+              value: {{ .value | quote }}
+          {{- else if .valueFrom }}
+              valueFrom:
+            {{- toYaml .valueFrom | nindent 14 }}
+          {{- end }}
+        {{- end }}
+            - name: DB_POSTGRESDB_HOST
+              value: {{ .Values.n8n.database.postgresdb.host | quote }}
+            - name: DB_POSTGRESDB_PORT
+              value: {{ .Values.n8n.database.postgresdb.port | quote }}
+            - name: DB_POSTGRESDB_DATABASE
+              value: {{ .Values.n8n.database.postgresdb.database | quote }}
+            - name: DB_POSTGRESDB_USER
+              value: {{ .Values.n8n.database.postgresdb.user | quote }}
+            - name: DB_POSTGRESDB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.n8n.database.postgresdb.existingSecret }}
+                  key: {{ .Values.n8n.database.postgresdb.existingSecretPasswordKey }}
+            - name: DB_POSTGRESDB_SSL_ENABLED
+              value: {{ .Values.n8n.database.postgresdb.ssl | quote }}
+          resources:
+          {{- toYaml .Values.n8n.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: {{ .Values.n8n.persistence.mountPath }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 5
+      volumes:
+        - name: data
+        {{- if .Values.n8n.persistence.enabled }}
+          persistentVolumeClaim:
+          {{- if .Values.n8n.persistence.existingClaim }}
+            claimName: {{ .Values.n8n.persistence.existingClaim }}
+          {{- else }}
+            claimName: {{ .Release.Name }}-data
+          {{- end }}
+        {{- else }}
+          emptyDir: {}
+        {{- end }}

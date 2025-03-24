@@ -1,0 +1,66 @@
+n8n:
+  image:
+    repository: ghcr.io/n8n-io/n8n
+    tag: 1.85.0
+    pullPolicy: IfNotPresent
+  replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+  database:
+    type: postgresdb
+    postgresdb:
+      host: "your-postgres-host"
+      port: 5432
+      database: "n8n"
+      user: "n8n_user"
+      # Use existingSecret for password in production
+      password: ""
+      existingSecret: "n8n-db-credentials"
+      existingSecretPasswordKey: "postgresql-password"
+      ssl: false
+  env:
+    - name: N8N_ENCRYPTION_KEY
+      valueFrom:
+        secretKeyRef:
+          name: n8n-encryption-key
+          key: encryptionKey
+    - name: NODE_ENV
+      value: "production"
+    - name: WEBHOOK_URL
+      value: "https://your-domain.com/"
+    - name: N8N_LOG_LEVEL
+      value: "info"
+    - name: EXECUTIONS_PROCESS
+      value: "main"
+    - name: EXECUTIONS_MODE
+      value: "queue"
+    - name: QUEUE_BULL_REDIS_PORT
+      value: "6379"
+    - name: DB_TYPE
+      value: "postgresdb"
+  persistence:
+    enabled: true
+    existingClaim: ""
+    storageClass: ""
+    accessMode: ReadWriteOnce
+    size: 10Gi
+    mountPath: /home/node/.n8n
+  gateway:
+    enabled: true
+    hostname: "n8n.your-domain.com"
+    pathType: Prefix
+    path: "/"
+    sectionName: "n8n"
+    serviceName: "n8n"
+    servicePort: 5678
+    tlsEnabled: true
+    tlsSecretName: "n8n-tls-cert"
+  service:
+    type: ClusterIP
+    port: 5678
+    annotations: {}
