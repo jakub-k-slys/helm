@@ -19,6 +19,27 @@ entries:
     urls:
     - https://github.com/jakub-k-slys/helm/releases/download/logto-0.1.0/logto-0.1.0.tgz
     version: 0.1.0
+  n8n:
+  - apiVersion: v2
+    appVersion: 1.85.0
+    created: "2025-03-24T16:04:44.298510834Z"
+    description: A Helm chart for n8n workflow automation tool with Gateway API, external
+      PostgreSQL and PVC
+    digest: 8143402c31c6779a1552c3755fa7575a2805923c2a3a4b3ca75abe9bd2e93a5d
+    home: https://n8n.io
+    icon: https://n8n.io/favicon.ico
+    keywords:
+    - automation
+    - platform
+    maintainers:
+    - name: jakub-k-slys
+    name: n8n
+    sources:
+    - https://github.com/n8n-io/n8n
+    type: application
+    urls:
+    - https://github.com/jakub-k-slys/helm/releases/download/n8n-0.1.0/n8n-0.1.0.tgz
+    version: 0.1.0
   teamcity:
   - apiVersion: v2
     appVersion: 2024.07.3
@@ -45,4 +66,4 @@ entries:
     urls:
     - https://github.com/jakub-k-slys/helm/releases/download/teamcity-0.7.4/teamcity-0.7.4.tgz
     version: 0.7.4
-generated: "2024-12-04T22:38:46.656201107Z"
+generated: "2025-03-24T16:04:44.298516544Z"
