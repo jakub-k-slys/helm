@@ -16,4 +16,5 @@ spec:
   resources:
     requests:
       storage: {{ .Values.n8n.persistence.size }}
+
 {{- end }}
