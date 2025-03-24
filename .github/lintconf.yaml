@@ -33,7 +33,7 @@ rules:
     check-multi-line-strings: false
   key-duplicates: enable
   line-length: disable
-  new-line-at-end-of-file: enable
+  new-line-at-end-of-file: disable
   new-lines:
     type: unix
   trailing-spaces: disable

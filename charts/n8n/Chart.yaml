@@ -1,0 +1,15 @@
+apiVersion: v2
+name: n8n
+description: A Helm chart for n8n workflow automation tool with Gateway API, external PostgreSQL and PVC
+type: application
+maintainers:
+  - name: jakub-k-slys
+home: https://n8n.io
+icon: https://n8n.io/favicon.ico
+sources:
+  - https://github.com/n8n-io/n8n
+keywords:
+  - automation
+  - platform
+version: 0.1.0
+appVersion: 1.85.0
